@@ -10,18 +10,27 @@ void lrznb() {
   std::this_thread::sleep_for(50ms);
 }
 
+void foo() {
+  using namespace std::chrono_literals;
+  PERF_TRACE(__FUNCTION__)
+  std::this_thread::sleep_for(50ms);
+}
+
 int main()
 {
   {
     PERF_TRACE(__FUNCTION__);
     {
-      auto foo = std::async([](){
-        lrznb();
-        lrznb();
-      });
-      lrznb();
-      lrznb();
-      lrznb();
+      for (int i = 0; i < 4; ++i) {
+        foo();
+      }
+//      auto foo = std::async([](){
+//        lrznb();
+//        lrznb();
+//      });
+//      lrznb();
+//      lrznb();
+//      lrznb();
     }
   }
 }

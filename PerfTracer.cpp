@@ -144,6 +144,11 @@ static void _summary() {
   greeting_style.line();
 }
 
+static std::mutex& _perf_tracer_mutex() {
+    static std::mutex mu;
+    return mu;
+}
+
 static void _register_report() {
   // The order cannot change, see: https://zh.cppreference.com/w/cpp/utility/program/atexit
   // `std::atexit` can be registered more than once, there's no need to help with the thread safety.
@@ -159,8 +164,13 @@ PerfTracer::PerfTracer(std::string n, bool specify_thread)
     : m_name(std::move(n) + ((specify_thread) ? "-Thread@" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) : ""))
 {
   if(!_thread_trace_stack().empty()) // If there's a dad, push me a son.
-    _summary_table()[_thread_trace_stack().top().get()].sons.push_back(
-        m_name);
+  {
+      std::lock_guard<std::mutex> l{_perf_tracer_mutex()};
+      auto& son_vec = _summary_table()[_thread_trace_stack().top().get()].sons;
+      auto it = std::find(son_vec.begin(), son_vec.end(), m_name);
+      if(son_vec.cend() == it)
+        son_vec.push_back(m_name);
+  }
   _thread_trace_stack().push(std::ref(m_name)); // Push stack.
   m_tp = clk_t::now();
 }
@@ -175,8 +185,7 @@ void PerfTracer::_write_table() {
   double period = std::chrono::duration<double, std::milli>(clk_t::now() - m_tp).count();
   _thread_trace_stack().pop();
 
-  static std::mutex mu;
-  std::lock_guard<std::mutex> l{mu};
+  std::lock_guard<std::mutex> l{_perf_tracer_mutex()};
   ResultType& result = _summary_table()[m_name];
   ++result.called_times;
   result.accumulated_time += period;
