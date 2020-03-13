@@ -35,41 +35,28 @@ namespace pt
 
 class PerfTracer{
 public: // Types
-  struct ResultType{
-    size_t                   called_times = 0;
-    double                   accumulated_time = 0.;
-    std::vector<std::string> sons{};
-  };
-
-  struct OutputType{
-    std::string name, sum, times, avg;
-    std::vector<std::pair<std::string, double>> spawned_calls_this_thread;
-  };
-
-  using clk_t =  std::chrono::high_resolution_clock;
-  using summary_table_t = std::unordered_map<std::string, ResultType>;
-
+    using clk_t =  std::chrono::high_resolution_clock;
 
 public:  // Public Functions.
-  ///
-  /// \param n The name string.
-  /// \param specify_thread Specify the name with thread hash id.
-  PerfTracer(std::string n, bool specify_thread = false);
+    ///
+    /// \param n The name string.
+    /// \param specify_thread Specify the name with thread hash id.
+    PerfTracer(std::string n, bool specify_thread = false);
 
-  /// DeConstructor. Fill the table and register report function at exit.
-  ~PerfTracer();
+    /// DeConstructor. Fill the table and register report function at exit.
+    ~PerfTracer();
 
 
 private: // Private Functions.
-  /// Write results to the final report table.
-  void _write_table();
+    /// Write results to the final report table.
+    void _write_table();
 
 
 public:  // Public Data
-  static std::ostream&   output_stream;
+    static std::ostream&   output_stream;
 private: // Private Data
-  clk_t::time_point      m_tp;
-  std::string            m_name;
+    clk_t::time_point      m_tp;
+    std::string            m_name;
 };
 
 
