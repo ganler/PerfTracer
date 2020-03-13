@@ -39,7 +39,7 @@ static summary_table_t& _summary_table() {
 
 
 static void _summary() {
-    using value_view_t = std::reference_wrapper<const summary_table_t::value_type>;
+    using table_value_ref_t = std::reference_wrapper<summary_table_t::value_type>;
 
     // Greeting
     auto greeting_style = GREEN.style({Style ::BOLD, Style ::ITALIC});
@@ -50,14 +50,14 @@ static void _summary() {
                   CLEAN << "::" << YELLOW << "[rank by average]\n";
     greeting_style.line();
 
-    std::vector<value_view_t >
-            ref_vector(_summary_table().cbegin(), _summary_table().cend());
+    std::vector<table_value_ref_t >
+            ref_vector(_summary_table().begin(), _summary_table().end());
 
-    auto avg_from_view = [](value_view_t v){
+    auto avg_from_view = [](const table_value_ref_t& v){
         return v.get().second.accumulated_time / v.get().second.called_times;
     };
 
-    std::sort(ref_vector.begin(), ref_vector.end(), [&avg_from_view](const value_view_t l, const value_view_t& r){
+    std::sort(ref_vector.begin(), ref_vector.end(), [&avg_from_view](const table_value_ref_t& l, const table_value_ref_t& r){
         // Less Fashion.
         return avg_from_view(l) > avg_from_view(r);
     });
@@ -86,16 +86,21 @@ static void _summary() {
         auto& sctt = outputs.back().spawned_calls_this_thread;
         sctt.reserve(n.get().second.sons.size());
 
+        auto& ref_sons = n.get().second.sons;
+        std::sort(ref_sons.begin(), ref_sons.end(), [](const std::string& l, const std::string& r){
+            return _summary_table()[l].accumulated_time > _summary_table()[r].accumulated_time;
+        });
         size_t esitmated_sctt_len = 0;
-        for(auto&& son : n.get().second.sons)
+        for(auto&& son : ref_sons)
         {
             std::stringstream ss;
-            const auto res = _summary_table().find(son);
-            auto it = std::lower_bound(ref_vector.begin(), ref_vector.end(), (*res), [&avg_from_view](auto&& l, auto&& r){
+            auto res = _summary_table().find(son);
+            table_value_ref_t v = std::ref (*res);
+            auto it = std::lower_bound(ref_vector.cbegin(), ref_vector.cend(), v, [&avg_from_view](auto&& l, auto&& r){
                 // Less Fashion.
                 return avg_from_view(l) > avg_from_view(r);
             }); // Log2(N)
-            int id = std::distance(ref_vector.begin(), it);
+            int id = std::distance(ref_vector.cbegin(), it);
             double proportion = avg_from_view(*res) / this_average;
             ss << " {ID:" << std::to_string(id + 1) << "}@" << std::setprecision(proportion_precision) << proportion * 100 << '%';
             sctt.emplace_back(ss.str(), proportion);

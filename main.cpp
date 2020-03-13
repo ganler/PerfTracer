@@ -24,6 +24,12 @@ int main()
         {
             PERF_TRACE("father of foo")
         }
+        {
+            PERF_TRACE("father of bar")
+        }
+        {
+            PERF_TRACE("father of jar")
+        }
         for (int i = 0; i < 4; ++i) {
             foo();
         }
