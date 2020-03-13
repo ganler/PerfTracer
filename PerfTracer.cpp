@@ -63,8 +63,7 @@ static void _summary() {
     });
 
     // Fields.
-    constexpr double factor = 0.8;
-    int max_len_one_line = get_term_length() * factor;
+    int max_len_one_line = get_term_length();
     int ID = 2, NAME = 4, SUM = 3, TIMES = 5, AVERAGE = 7, SPAWNED_CALL_THIS_THREAD=24;
 
     ++ID, ++NAME, ++SUM, ++TIMES, ++AVERAGE, ++SPAWNED_CALL_THIS_THREAD; // 1 more byte space;
@@ -114,7 +113,8 @@ static void _summary() {
 
         SPAWNED_CALL_THIS_THREAD = std::max(SPAWNED_CALL_THIS_THREAD, (int)esitmated_sctt_len);
     }
-    SPAWNED_CALL_THIS_THREAD = std::max(SPAWNED_CALL_THIS_THREAD, max_len_one_line - NAME - SUM - TIMES - AVERAGE);
+    int left_for_last_field = max_len_one_line - ID - NAME - SUM - TIMES - AVERAGE;
+    SPAWNED_CALL_THIS_THREAD = std::max(SPAWNED_CALL_THIS_THREAD, left_for_last_field);
     constexpr char no_call_prompt[] = " No spawned calls in this thread ";
     SPAWNED_CALL_THIS_THREAD = std::max(SPAWNED_CALL_THIS_THREAD, (int)sizeof(no_call_prompt));
 
