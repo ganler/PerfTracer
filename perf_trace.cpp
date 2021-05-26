@@ -2,7 +2,7 @@
 // Created by ganler on 3/11/20.
 //
 
-#include "PerfTracer.hpp"
+#include "perf_trace.hpp"
 
 
 namespace glr
@@ -10,7 +10,7 @@ namespace glr
 
 constexpr int proportion_precision = 3;
 
-std::ostream& glr::PerfTracer::output_stream{std::cout};
+std::ostream& glr::perf_trace::output_stream{std::cout};
 
 
 struct ResultType{
@@ -45,7 +45,7 @@ static void _summary() {
     auto greeting_style = GREEN.style({Style ::BOLD, Style ::ITALIC});
 
     greeting_style.line();
-    auto& output_stream = PerfTracer::output_stream;
+    auto& output_stream = perf_trace::output_stream;
     output_stream << greeting_style << ">>> [SUMMARY]" <<
                   CLEAN << "::" << YELLOW << "[rank by average]\n";
     greeting_style.line();
@@ -125,7 +125,7 @@ static void _summary() {
     ID = std::max(ID, at_least_chars_for_id);
 
     // Output Results
-    constexpr std::array<TermStyle<0>, 8> color_switch{
+    constexpr std::array<term_style<0>, 8> color_switch{
             BLACK,
             RED,
             GREEN,
@@ -195,7 +195,7 @@ static void _register_report() {
 }
 
 
-PerfTracer::PerfTracer(std::string n, bool specify_thread)
+perf_trace::perf_trace(std::string n, bool specify_thread)
         : m_name(std::move(n) + ((specify_thread) ? "-Thread@" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) : ""))
 {
     if(!_thread_trace_stack().empty()) // If there's a dad, push me a son.
@@ -210,13 +210,13 @@ PerfTracer::PerfTracer(std::string n, bool specify_thread)
     m_tp = clk_t::now();
 }
 
-PerfTracer::~PerfTracer() {
+perf_trace::~perf_trace() {
     _write_table();
     _register_report();
 }
 
 
-void PerfTracer::_write_table() {
+void perf_trace::_write_table() {
     double period = std::chrono::duration<double, std::milli>(clk_t::now() - m_tp).count();
     _thread_trace_stack().pop();
 

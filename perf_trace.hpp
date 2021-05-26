@@ -17,12 +17,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "TermStyle.hpp"
+#include "term_style.hpp"
 
 #define ENABLE_PERF_TRACE
 #ifdef ENABLE_PERF_TRACE
-#define PERF_TRACE(X) glr::PerfTracer perf_##__COUNTER__(X);
-#define THREAD_PERF_TRACE(X) glr::PerfTracer perf_##__COUNTER__(X, true);
+#define PERF_TRACE(X) glr::perf_trace perf_##__COUNTER__(X);
+#define THREAD_PERF_TRACE(X) glr::perf_trace perf_##__COUNTER__(X, true);
 #else
 #define PERF_TRACE(X)
 #endif
@@ -33,7 +33,7 @@
 namespace glr
 {
 
-class PerfTracer{
+class perf_trace{
 public: // Types
     using clk_t =  std::chrono::high_resolution_clock;
 
@@ -41,10 +41,10 @@ public:  // Public Functions.
     ///
     /// \param n The name string.
     /// \param specify_thread Specify the name with thread hash id.
-    PerfTracer(std::string n, bool specify_thread = false);
+    perf_trace(std::string n, bool specify_thread = false);
 
     /// DeConstructor. Fill the table and register report function at exit.
-    ~PerfTracer();
+    ~perf_trace();
 
 
 private: // Private Functions.

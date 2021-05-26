@@ -51,32 +51,32 @@ inline size_t get_term_length(unsigned short int max_len = 256) {
 
 /// Class to help stylize the stream outputs.
 template <size_t MAX_STYLE_NUM=0>
-class TermStyle {
+class term_style {
 public:
     static constexpr size_t max_style_num = MAX_STYLE_NUM;
 
     /// Constructor.
     /// \param color The style colors. See class `glr::Color`.
     /// \param styles The styles. See class `glr::Style`.
-    constexpr TermStyle(Color color, std::array<Style, MAX_STYLE_NUM> styles = {})
+    constexpr term_style(Color color, std::array<Style, MAX_STYLE_NUM> styles = {})
             : m_color_code(static_cast<uint8_t>(color)), style_array(styles){}
 
     ///
-    /// \return A new TermStyle class with background colored.
-    constexpr inline TermStyle background() const noexcept {
+    /// \return A new term_style class with background colored.
+    constexpr inline term_style background() const noexcept {
         return termcolor_from_int(m_color_code + 10);
     }
 
     ///
-    /// \return A new TermStyle class with brighter font colored.
-    constexpr inline TermStyle bright() const noexcept {
+    /// \return A new term_style class with brighter font colored.
+    constexpr inline term_style bright() const noexcept {
         return termcolor_from_int(m_color_code + 60);
     }
 
     ///
-    /// \param s_ Single Style object to add the styles of TermStyle.
-    /// \return A new TermStyle class with appended style.
-    inline TermStyle<MAX_STYLE_NUM+1> style(Style s_) const noexcept {
+    /// \param s_ Single Style object to add the styles of term_style.
+    /// \return A new term_style class with appended style.
+    inline term_style<MAX_STYLE_NUM+1> style(Style s_) const noexcept {
         Style sarr[]{s_};
         return style(sarr);
     }
@@ -84,10 +84,10 @@ public:
     ///
     /// \tparam N The number of styles to be appended.
     /// \param sl Array list of styles to be appended.
-    /// \return A new TermStyle class with appended styles.
+    /// \return A new term_style class with appended styles.
     template <size_t N>
-    inline TermStyle<MAX_STYLE_NUM+N> style(const Style (&sl)[N]) const noexcept {
-        TermStyle<MAX_STYLE_NUM+N> t(this->color());
+    inline term_style<MAX_STYLE_NUM+N> style(const Style (&sl)[N]) const noexcept {
+        term_style<MAX_STYLE_NUM+N> t(this->color());
         std::copy(this->style_array.begin(), this->style_array.end(), t.style_array.begin());
         std::copy(sl, sl + N, t.style_array.begin() + MAX_STYLE_NUM);
         return t;
@@ -111,7 +111,7 @@ public:
 
         os << (*this) << '+';
         padding(n, pattern, os);
-        os << '+' << TermStyle<0>(Color::CLEAN) << '\n';
+        os << '+' << term_style<0>(Color::CLEAN) << '\n';
     }
 
     /// Drawing replicas.
@@ -139,7 +139,7 @@ public:
     /// \param os
     /// \param term_color
     /// \return
-    friend inline std::ostream& operator<<(std::ostream& os, const TermStyle & term_color) {
+    friend inline std::ostream& operator<<(std::ostream& os, const term_style & term_color) {
         os << "\033[0m\033[" << static_cast<int>(term_color.m_color_code) ;
 
         for(auto s : term_color.style_array)
@@ -154,14 +154,14 @@ public:
     std::array<Style, MAX_STYLE_NUM> style_array;
 
 private:
-    constexpr inline TermStyle termcolor_from_int(uint8_t c) const noexcept {
-        return TermStyle{static_cast<Color>(c)};
+    constexpr inline term_style termcolor_from_int(uint8_t c) const noexcept {
+        return term_style{static_cast<Color>(c)};
     }
     uint8_t m_color_code;
 };
 
 
-constexpr TermStyle<0> RED(Color::RED), BLUE(Color::BLUE), GREEN(Color::GREEN),
+constexpr term_style<0> RED(Color::RED), BLUE(Color::BLUE), GREEN(Color::GREEN),
         BLACK(Color::BLACK), YELLOW(Color::YELLOW), PURPLE(Color::PURPLE),
         CYAN(Color::CYAN), WHITE(Color::WHITE), DEF(Color::DEFAULT), CLEAN(Color::CLEAN);
 
