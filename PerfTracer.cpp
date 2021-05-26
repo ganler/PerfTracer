@@ -5,12 +5,12 @@
 #include "PerfTracer.hpp"
 
 
-namespace pt
+namespace glr
 {
 
 constexpr int proportion_precision = 3;
 
-std::ostream& pt::PerfTracer::output_stream{std::cout};
+std::ostream& glr::PerfTracer::output_stream{std::cout};
 
 
 struct ResultType{

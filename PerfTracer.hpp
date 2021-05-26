@@ -21,8 +21,8 @@
 
 #define ENABLE_PERF_TRACE
 #ifdef ENABLE_PERF_TRACE
-#define PERF_TRACE(X) pt::PerfTracer perf_##__COUNTER__(X);
-#define THREAD_PERF_TRACE(X) pt::PerfTracer perf_##__COUNTER__(X, true);
+#define PERF_TRACE(X) glr::PerfTracer perf_##__COUNTER__(X);
+#define THREAD_PERF_TRACE(X) glr::PerfTracer perf_##__COUNTER__(X, true);
 #else
 #define PERF_TRACE(X)
 #endif
@@ -30,7 +30,7 @@
 /*!
  * @author: Jiawei Liu.
  */
-namespace pt
+namespace glr
 {
 
 class PerfTracer{

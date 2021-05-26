@@ -12,7 +12,7 @@
 /*!
  * @author: Jiawei Liu.
  */
-namespace pt
+namespace glr
 {
 
 // https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -56,8 +56,8 @@ public:
     static constexpr size_t max_style_num = MAX_STYLE_NUM;
 
     /// Constructor.
-    /// \param color The style colors. See class `pt::Color`.
-    /// \param styles The styles. See class `pt::Style`.
+    /// \param color The style colors. See class `glr::Color`.
+    /// \param styles The styles. See class `glr::Style`.
     constexpr TermStyle(Color color, std::array<Style, MAX_STYLE_NUM> styles = {})
             : m_color_code(static_cast<uint8_t>(color)), style_array(styles){}
 
