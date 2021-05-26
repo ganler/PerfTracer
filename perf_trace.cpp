@@ -3,7 +3,19 @@
 //
 
 #include "perf_trace.hpp"
+#include "term_style.hpp"
 
+#include <cassert>
+#include <chrono>
+#include <iomanip>
+#include <memory>
+#include <mutex>
+#include <numeric>
+#include <sstream>
+#include <stack>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 namespace glr
 {

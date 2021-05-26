@@ -2,34 +2,22 @@
 // Created by ganler on 3/11/20.
 //
 
+
+/*!
+ * @author: Jiawei Liu.
+ */
+
 #pragma once
 
-#include <cassert>
 #include <chrono>
-#include <iomanip>
-#include <memory>
-#include <mutex>
-#include <numeric>
-#include <queue>
-#include <sstream>
-#include <stack>
-#include <thread>
-#include <unordered_map>
-#include <vector>
-
-#include "term_style.hpp"
+#include <iostream>
+#include <string>
 
 #define ENABLE_PERF_TRACE
 #ifdef ENABLE_PERF_TRACE
 #define PERF_TRACE(X) glr::perf_trace perf_##__COUNTER__(X);
 #define THREAD_PERF_TRACE(X) glr::perf_trace perf_##__COUNTER__(X, true);
-#else
-#define PERF_TRACE(X)
-#endif
 
-/*!
- * @author: Jiawei Liu.
- */
 namespace glr
 {
 
@@ -60,3 +48,7 @@ private: // Private Data
 };
 
 }
+
+#else
+#define PERF_TRACE(X)
+#endif
